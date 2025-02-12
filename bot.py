@@ -102,10 +102,10 @@ async def start_command(client, message):
         await auto_delete_message(message, await message.reply_text(f"An error occurred: {e}"))
 
 
-@bot.on_message(filters.chat(DB_CHANNEL_ID) & (filters.document | filters.video |filters.audio))
-async def handle_new_message(client, message):
+#@bot.on_message(filters.chat(DB_CHANNEL_ID) & (filters.document | filters.video |filters.audio))
+#async def handle_new_message(client, message):
     # Add the message to the queue for sequential processing
-    await message_queue.put(message)
+    #await message_queue.put(message)
     
 @bot.on_message(filters.private & filters.command("index") & filters.user(OWNER_ID))
 async def handle_file(client, message):
