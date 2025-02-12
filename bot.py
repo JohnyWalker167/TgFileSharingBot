@@ -417,7 +417,7 @@ async def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    bot.send_message(OWNER_ID,"Bot Started ✅")
+    bot.send_message(LOG_CHANNEL_ID,"Bot Started ✅")
     
     try:
         bot.loop.run_until_complete(main())
