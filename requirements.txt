@@ -1,0 +1,10 @@
+flask 
+gunicorn
+uvloop
+pyrofork
+TgCrypto
+python-dotenv
+requests
+aiohttp
+pymongo
+mutagen
