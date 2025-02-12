@@ -1,6 +1,7 @@
 import uvloop
 import asyncio
 import uuid
+import sys
 from time import time as tm
 from asyncio import create_subprocess_exec, gather
 from pyrogram.types import User
@@ -297,12 +298,8 @@ async def process_message(client, message):
 
 @bot.on_message(filters.command('restart') & filters.private & filters.user(OWNER_ID))
 async def restart(client, message):
-    restart_message = await message.reply_text('Restarting...')
-    proc1 = await create_subprocess_exec('pkill', '-9', '-f', '-e', 'bot.py')
-    proc2 = await create_subprocess_exec('python3', 'update.py')
-    await gather(proc1.wait(), proc2.wait())
-    await create_subprocess_exec('python3', 'bot.py')
-    await restart_message.edit_text('Restart complete! Bot is running again.')
+    os.system("python3 update.py")  
+    os.execl(sys.executable, sys.executable, "bot.py")
 
 async def verify_token(user_id, input_token):
     current_time = tm()
@@ -420,7 +417,7 @@ async def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    logger.info("Bot is starting...")
+    bot.send_message(OWNER_ID,"Bot Started ✅")
     
     try:
         bot.loop.run_until_complete(main())
