@@ -102,10 +102,10 @@ async def start_command(client, message):
         await auto_delete_message(message, await message.reply_text(f"An error occurred: {e}"))
 
 
-#@bot.on_message(filters.chat(DB_CHANNEL_ID) & (filters.document | filters.video |filters.audio))
-#async def handle_new_message(client, message):
+@bot.on_message(filters.chat(DB_CHANNEL_ID) & (filters.document | filters.video |filters.audio))
+async def handle_new_message(client, message):
     # Add the message to the queue for sequential processing
-    #await message_queue.put(message)
+    await message_queue.put(message)
     
 @bot.on_message(filters.private & filters.command("index") & filters.user(OWNER_ID))
 async def handle_file(client, message):
@@ -229,19 +229,16 @@ async def process_message(client, message):
     await asyncio.sleep(3)
 
     media = message.document or message.video or message.audio
-    poster_url = None
 
     if media:
         caption = message.caption if message.caption else media.file_name
         file_name = await remove_extension(caption)   
         file_size = humanbytes(media.file_size)
+        thumbnail = media.thumbs[0].file_id if media.thumbs else None
         if message.video:
             duration = TimeFormatter(media.duration * 1000)
         else:
             duration = ""
-        if not message.audio: 
-            movie_name, release_year = await extract_movie_info(file_name)
-            poster_url = await get_by_name(movie_name, release_year)
         if message.audio:
             audio_path = await bot.download_media(message.audio.file_id)
             audio_thumb = await get_audio_thumbnail(audio_path)
@@ -254,10 +251,10 @@ async def process_message(client, message):
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("Send in DM", url=f"https://telegram.dog/{bot_username}?start={file_id}")]])
 
         try:
-            if poster_url:
+            if thumbnail:
                 await bot.send_photo(
                     UPDATE_CHANNEL_ID,
-                    photo=poster_url,
+                    photo=thumbnail,
                     caption=v_info,
                     parse_mode=enums.ParseMode.HTML,
                     reply_markup=keyboard
@@ -281,7 +278,7 @@ async def process_message(client, message):
                 os.remove(audio_path) 
 
         except (WebpageMediaEmpty, WebpageCurlFailed):
-            logger.info(f"{poster_url}")
+            logger.info(f"{thumbnail}")
             await bot.send_message(
                 UPDATE_CHANNEL_ID,
                 text=v_info,
