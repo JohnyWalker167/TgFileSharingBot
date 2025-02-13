@@ -226,7 +226,7 @@ async def process_queue():
 
 async def process_message(client, message):
 
-    await asyncio.sleep(3)
+    
 
     media = message.document or message.video or message.audio
 
@@ -237,6 +237,7 @@ async def process_message(client, message):
         thumbnail = None
 
         if message.video:
+            await asyncio.sleep(3)
             thumbnail = await bot.download_media(media.thumbs[0].file_id)
             duration = TimeFormatter(media.duration * 1000)
         else:
@@ -253,6 +254,8 @@ async def process_message(client, message):
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("Send in DM", url=f"https://telegram.dog/{bot_username}?start={file_id}")]])
 
         try:
+            await asyncio.sleep(3)
+            
             if thumbnail:
                 await bot.send_photo(
                     UPDATE_CHANNEL_ID,
