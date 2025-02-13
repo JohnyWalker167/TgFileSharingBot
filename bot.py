@@ -235,10 +235,9 @@ async def process_message(client, message):
         file_name = await remove_extension(caption)   
         file_size = humanbytes(media.file_size)
         thumbnail = None
-        if message.video and message.video.thumbs:
-            thumbnail = message.video.thumbs[0].file_id  
 
         if message.video:
+            thumbnail = await bot.download_media(media.thumbs[0].file_id)
             duration = TimeFormatter(media.duration * 1000)
         else:
             duration = ""
